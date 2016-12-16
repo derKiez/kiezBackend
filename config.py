@@ -1,0 +1,5 @@
+
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
+CRYPTING_PASSWORD = '$2b$14$4CnYjkGTZLo1MirLXsLBCe'
+DB_NAME = 'kiez'
