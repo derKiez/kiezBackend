@@ -1,9 +1,4 @@
-from collections import defaultdict
-from random import randint
-from datetime import datetime
-
 import bcrypt
-from app import db
 from config import CRYPTING_PASSWORD
 from models.base import BaseModel
 
@@ -22,17 +17,17 @@ class User(BaseModel):
 
 
     def set_email(self, email):
-        db.users.update({"_id": self._id},
+        User.q.database.users.update({"_id": self._id},
                         {"$set": {"email": email}})
 
     def set_token(self, token):
-        db.users.update({"_id": self._id},
+        User.q.database.users.update({"_id": self._id},
                         {"$set": {"token": token}})
 
     def set_password(self, password):
         password = password.encode("utf-8")
         hash = bcrypt.hashpw(b"%s" % password, CRYPTING_PASSWORD)
-        db.users.update({"_id": self._id},
+        User.q.database.users.update({"_id": self._id},
                          {"$set": {"password": hash}})
 
     def check_password(self, password):
@@ -48,8 +43,8 @@ class User(BaseModel):
 
     def save(self):
         if self._id:
-            db.users.update({"_id": self._id},
+            User.q.database.users.update({"_id": self._id},
                             {"$set": self.serialize()})
         else:
-            self._id = db.users.insert(self.serialize())
+            self._id = User.q.database.users.insert(self.serialize())
         return self._id

@@ -1,5 +1,9 @@
-from app import db
 from bson import ObjectId
+from config import DB_NAME, MONGO_HOST, MONGO_PORT
+from pymongo import MongoClient
+
+client = MongoClient(host=MONGO_HOST, port=MONGO_PORT, connect=False)
+db = client[DB_NAME]
 
 
 class classproperty(property):
@@ -51,6 +55,10 @@ class BlockingQuery(object):
     def filter_by(self, **kwargs):
         self._filters.update(kwargs)
         return self
+
+    def get(self, **kwargs):
+        self._filters.update(kwargs)
+        return self.first()
 
     def filter(self, filters):
         self._filters.update(filters)
