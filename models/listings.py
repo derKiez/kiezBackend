@@ -14,7 +14,8 @@ class Listing(BaseModel):
 
 
     def serialize(self):
-        return {"text": self.text,
+        return {"id": self._id,
+                "text": self.text,
                 "owner": self.owner,
                 "zipcode": self.zipcode,
                 "created_at": self.created_at
@@ -39,10 +40,12 @@ class ListingComment(BaseModel):
         self.text = kwargs.get("text")
         self.owner = kwargs.get("owner")
         self.listing = kwargs.get("listing")
+        self.created_at = kwargs.get("created_at")
         super(ListingComment, self).__init__(*args, **kwargs)
 
     def serialize(self):
-        return {"text": self.id,
+        return {"id": self._id,
+                "text": self.text,
                 "owner": self.owner,
                 "listing": self.listing,
                 "created_at": self.created_at}
@@ -52,6 +55,6 @@ class ListingComment(BaseModel):
             ListingComment.q.update({"_id": self._id},
                                     {"$set": self.serialize()})
         else:
-            self._id = Listing.q.insert(self.serialize())
+            self._id = ListingComment.q.insert(self.serialize())
             self.created_at = datetime.datetime.utcnow()
         return self._id
