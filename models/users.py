@@ -38,13 +38,14 @@ class User(BaseModel):
     def serialize(self):
         return {'id': self.id,
                 "email": self.email,
+                "zipcode": self.zipcode,
                 "username": self.username}
 
 
     def save(self):
         if self._id:
             User.q.database.users.update({"_id": self._id},
-                            {"$set": self.serialize()})
+                                         {"$set": self.serialize()})
         else:
             self._id = User.q.database.users.insert(self.serialize())
         return self._id

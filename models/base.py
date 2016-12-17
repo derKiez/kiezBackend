@@ -47,6 +47,7 @@ class BlockingQuery(object):
         self.model = model
         self.database = database
         self._filters = {}
+        self._body = {}
         self._sort_params = None
         self._limit = None
         self._skip = None
@@ -59,6 +60,16 @@ class BlockingQuery(object):
     def get(self, **kwargs):
         self._filters.update(kwargs)
         return self.first()
+
+    def update(self, filters, body):
+        self._filters.update(filters)
+        self._body.update(body)
+        return self._update()
+
+    def insert(self, body):
+        self._body.update(body)
+        return self._insert()
+
 
     def filter(self, filters):
         self._filters.update(filters)
@@ -112,6 +123,12 @@ class BlockingQuery(object):
     def count(self):
         cursor = self.collection.find(self._filters)
         return cursor.count()
+
+    def _update(self):
+        return self.collection.update(self._filters, self._body)
+
+    def _insert(self):
+        return self.collection.insert(self._body)
 
     def find(self):
         cursor = self.collection.find(self._filters)

@@ -9,6 +9,13 @@ from utils import json_encode
 def authorize(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        token = request.args.get("token")
+        if not token:
+            return Response(status=403)
+        user = User.q.get(token=token)
+        if not user:
+            return Response(status=403)
+        request.user = user
         return func(self, *args, **kwargs)
     return wrapper
 
