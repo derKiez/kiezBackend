@@ -43,7 +43,7 @@ class User(BaseModel):
                 }
 
     def save(self):
-        if self.    _id:
+        if self._id:
             User.q.update({"_id": self._id},
                           {"$set": self.serialize()})
         else:
