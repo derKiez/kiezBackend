@@ -17,18 +17,18 @@ class User(BaseModel):
 
 
     def set_email(self, email):
-        User.q.database.users.update({"_id": self._id},
-                        {"$set": {"email": email}})
+        User.q.update({"_id": self._id},
+                      {"$set": {"email": email}})
 
     def set_token(self, token):
-        User.q.database.users.update({"_id": self._id},
-                        {"$set": {"token": token}})
+        User.q.update({"_id": self._id},
+                      {"$set": {"token": token}})
 
     def set_password(self, password):
         password = password.encode("utf-8")
         hash = bcrypt.hashpw(b"%s" % password, CRYPTING_PASSWORD)
-        User.q.database.users.update({"_id": self._id},
-                         {"$set": {"password": hash}})
+        User.q.update({"_id": self._id},
+                      {"$set": {"password": hash}})
 
     def check_password(self, password):
         password = password.encode("utf-8")
@@ -39,13 +39,13 @@ class User(BaseModel):
         return {'id': self.id,
                 "email": self.email,
                 "zipcode": self.zipcode,
-                "username": self.username}
-
+                "username": self.username
+                }
 
     def save(self):
-        if self._id:
-            User.q.database.users.update({"_id": self._id},
-                                         {"$set": self.serialize()})
+        if self.    _id:
+            User.q.update({"_id": self._id},
+                          {"$set": self.serialize()})
         else:
-            self._id = User.q.database.users.insert(self.serialize())
+            self._id = User.q.insert(self.serialize())
         return self._id

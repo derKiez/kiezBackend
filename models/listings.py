@@ -12,15 +12,12 @@ class Listing(BaseModel):
         self.zipcode = kwargs.get("zipcode")
         super(Listing, self).__init__(*args, **kwargs)
 
-
     def serialize(self):
         return {"id": self._id,
                 "text": self.text,
                 "owner": self.owner,
                 "zipcode": self.zipcode,
-                "created_at": self.created_at
-                }
-
+                "created_at": self.created_at}
 
     def save(self):
         if self._id:
@@ -39,6 +36,8 @@ class ListingComment(BaseModel):
     def __init__(self, *args, **kwargs):
         self.text = kwargs.get("text")
         self.owner = kwargs.get("owner")
+        self.is_private = kwargs.get("is_private")
+        self.parent_id = kwargs.get("parent")
         self.listing = kwargs.get("listing")
         self.created_at = kwargs.get("created_at")
         super(ListingComment, self).__init__(*args, **kwargs)
@@ -48,6 +47,7 @@ class ListingComment(BaseModel):
                 "text": self.text,
                 "owner": self.owner,
                 "listing": self.listing,
+                "children": self.children,
                 "created_at": self.created_at}
 
     def save(self):
@@ -58,3 +58,8 @@ class ListingComment(BaseModel):
             self._id = ListingComment.q.insert(self.serialize())
             self.created_at = datetime.datetime.utcnow()
         return self._id
+
+    @property
+    def children(self):
+        children_comments = ListingComment.q.filter({"parent_id": self._id}).all()
+        return [comment.serialize() for comment in children_comments]
