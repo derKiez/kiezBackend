@@ -35,15 +35,19 @@ class ListingComment(BaseModel):
 
     def __init__(self, *args, **kwargs):
         self.text = kwargs.get("text")
+        self.is_private = kwargs.get("is_private")
         self.owner = kwargs.get("owner")
         self.is_private = kwargs.get("is_private")
         self.parent_id = kwargs.get("parent")
         self.listing = kwargs.get("listing")
+        self.parent = kwargs.get("parent")
         self.created_at = kwargs.get("created_at")
         super(ListingComment, self).__init__(*args, **kwargs)
 
     def serialize(self):
         return {"id": self._id,
+                "is_private": self.is_private,
+                "parent": self.parent,
                 "text": self.text,
                 "owner": self.owner,
                 "listing": self.listing,

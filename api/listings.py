@@ -47,7 +47,7 @@ class ListingsView(MethodView):
         return Response(status=201)
 
 
-class CommentListView(MethodView):
+class *CommentListView(MethodView):
 
     @authorize
     def get(self, listing_id):
@@ -83,9 +83,11 @@ class CommentListView(MethodView):
             return Response(status=404)
         data = request.json
         text = data.get("text")
+        is_private = data.get("is_private")
+        parent = data.get("parent")
         owner = request.user.serialize()
-
         comment = ListingComment(text=text,
+                                 parent=parent,
                                  listing=listing.serialize(),
                                  owner=owner)
         comment.save()

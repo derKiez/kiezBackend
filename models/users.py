@@ -1,4 +1,5 @@
 import bcrypt
+from geohash import encode
 from config import CRYPTING_PASSWORD
 from models.base import BaseModel
 
@@ -11,10 +12,11 @@ class User(BaseModel):
         self.email = kwargs.get("email")
         self.username = kwargs.get("username")
         self.password = kwargs.get("password")
-        self.zipcode = kwargs.get("zipcode")
+        self.latitude = kwargs.get("latitude")
+        self.longitude = kwargs.get("longitude")
+        self.geohash = kwargs.get("geohash")
         self.token = None
         super(User, self).__init__(*args, **kwargs)
-
 
     def set_email(self, email):
         User.q.update({"_id": self._id},
@@ -30,6 +32,12 @@ class User(BaseModel):
         User.q.update({"_id": self._id},
                       {"$set": {"password": hash}})
 
+    def set_geohash(self, latitude, longitude, precision=7):
+        geohash = encode(latitude, longitude, precision=precision)
+        self.geohash = geohash
+        User.q.update({"_id": self._id},
+                      {"$set": {"geohash": geohash}})
+
     def check_password(self, password):
         password = password.encode("utf-8")
         hash = bcrypt.hashpw(b'%s' % password, CRYPTING_PASSWORD)
@@ -38,7 +46,7 @@ class User(BaseModel):
     def serialize(self):
         return {'id': self.id,
                 "email": self.email,
-                "zipcode": self.zipcode,
+                "geohash": self.geohash,
                 "username": self.username
                 }
 
